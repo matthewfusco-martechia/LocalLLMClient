@@ -1,3 +1,4 @@
+#ifdef __cplusplus
 #include <memory>
 
 #include "../common/chat.h"
@@ -14,3 +15,4 @@ void add_message_to_inputs(common_chat_templates_inputs* inputs, const char* rol
 common_chat_params apply_chat_templates_safe(const common_chat_templates* tmpls, common_chat_templates_inputs* inputs);
 common_chat_params apply_chat_templates_with_model(const struct llama_model* model, common_chat_templates_inputs* inputs);
 void free_chat_templates_inputs(common_chat_templates_inputs* inputs);
+#endif
