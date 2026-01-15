@@ -160,6 +160,7 @@ packageTargets.append(contentsOf: [
         name: "LocalLLMClientLlamaC",
         dependencies: ["LocalLLMClientLlamaFramework"],
         exclude: ["exclude"],
+        publicHeadersPath: "include",
         cSettings: [
             .unsafeFlags(["-w"]),
             .headerSearchPath(".")
