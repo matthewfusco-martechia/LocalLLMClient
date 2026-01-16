@@ -1,3 +1,0 @@
-[submodule "Sources/LocalLLMClientLlamaC/exclude/llama.cpp"]
-	path = Sources/LocalLLMClientLlamaC/exclude/llama.cpp
-	url = https://github.com/ggml-org/llama.cpp.git
