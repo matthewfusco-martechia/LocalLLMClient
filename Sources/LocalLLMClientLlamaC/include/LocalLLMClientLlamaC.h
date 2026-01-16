@@ -1,9 +1,9 @@
+// LocalLLMClientLlamaC.h - Pure C header for iOS device compatibility
+// NO C++ includes allowed - all C++ logic is in .cpp implementation files
+
 #pragma once
 
-#ifndef __cplusplus
-#error "LocalLLMClientC needs to be compiled in C++ interoperability mode."
-#endif
-
+// Core llama.cpp C headers only
 #include "clip.h"
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
@@ -15,6 +15,5 @@
 #include "mtmd-helper.h"
 #include "mtmd.h"
 
-#include "utils.h"
-
-#include "../common/chat.h"
+// NOTE: chat.h, common.h, and utils.h are NOT included here because they
+// contain C++ STL types. Tool call parsing is handled in pure Swift instead.

@@ -57,16 +57,8 @@ final class Model {
         }
     }
 
-    func chatFormat() -> common_chat_format {
-        let inputs = create_chat_templates_inputs()
-        defer { 
-            free_chat_templates_inputs(inputs)
-        }
-
-        add_message_to_inputs(inputs, "user", "test")
-        let params = apply_chat_templates_with_model(model, inputs)
-        return params.format
-    }
+    // NOTE: chatFormat() removed - it required C++ headers from common/.
+    // Tool call parsing is now handled in pure Swift.
 }
 
 private func getString(capacity: Int = 1024, getter: (UnsafeMutablePointer<CChar>?, Int) -> Int32) -> String {

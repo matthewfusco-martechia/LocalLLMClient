@@ -11,10 +11,6 @@ public final class LlamaClient: LLMClient {
     private let messageProcessor: MessageProcessor
     let tools: [AnyLLMTool]
 
-    var chatFormat: common_chat_format {
-        context.model.chatFormat()
-    }
-
     /// Initializes a new Llama client.
     ///
     /// - Parameters:
@@ -82,29 +78,24 @@ public final class LlamaClient: LLMClient {
     public func responseStream(from input: LLMInput) async throws -> AsyncThrowingStream<StreamingChunk, any Error> {
         // Create the stream first (this can throw)
         let textStreamGenerator = try textStream(from: input)
-        let chatFormat = self.chatFormat
         
         return AsyncThrowingStream { continuation in
             let processor = StreamingToolCallProcessor(
-                startTag: getToolCallStartTag(),
-                endTag: getToolCallEndTag()
+                startTag: "<tool_call>",
+                endTag: "</tool_call>"
             )
             
             Task {
                 do {
-                    var fullText = ""
-                    
                     for try await chunk in textStreamGenerator {
-                        fullText += chunk
-                        
                         // Process the chunk through the tool call processor
                         if let processedText = processor.processChunk(chunk) {
                             continuation.yield(.text(processedText))
                         }
                     }
 
-                    var toolCalls = processor.toolCalls + (LlamaToolCallParser.parseToolCalls(from: fullText, format: chatFormat) ?? [])
-                    toolCalls = toolCalls.reduce(into: []) { result, toolCall in
+                    // Yield tool calls detected by the streaming processor
+                    let toolCalls = processor.toolCalls.reduce(into: [LLMToolCall]()) { result, toolCall in
                         if !result.contains(where: { $0.name == toolCall.name }) {
                             result.append(toolCall)
                         }
@@ -119,24 +110,6 @@ public final class LlamaClient: LLMClient {
                     continuation.finish(throwing: error)
                 }
             }
-        }
-    }
-    
-    /// Get the tool call start tag based on chat format
-    private func getToolCallStartTag() -> String {
-        // Different chat formats may use different tags
-        switch chatFormat {
-        default:
-            return "<tool_call>"
-        }
-    }
-    
-    /// Get the tool call end tag based on chat format
-    private func getToolCallEndTag() -> String {
-        // Different chat formats may use different tags
-        switch chatFormat {
-        default:
-            return "</tool_call>"
         }
     }
     
